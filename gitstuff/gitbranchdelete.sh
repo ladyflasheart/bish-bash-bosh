@@ -17,7 +17,6 @@ if [ ! "${branches}" ]; then
 fi
 
 readarray -t branchlist <<<"$branches"
-branchlist_length="${#branchlist[@]}"
 
 for index in "${!branchlist[@]}"; do
   # remove current branch from the choices (marked with * at start of git branch output)
@@ -28,6 +27,12 @@ for index in "${!branchlist[@]}"; do
   branchname=${branchname//[[:space:]]/}
   branchlist[$index]="${branchname}"
 done
+
+branchlist_length="${#branchlist[@]}"
+if [ "${branchlist_length}" -eq 0 ]; then
+  echo "Sorry, no branches found! Quitting now..."
+  exit
+fi
 
 # list the local branches (not including current branch as can't delete that)
 echo "Available local branches...."
