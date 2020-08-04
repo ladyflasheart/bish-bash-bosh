@@ -34,43 +34,75 @@ if [ "${branchlist_length}" -eq 0 ]; then
   exit
 fi
 
-# list the local branches (not including current branch as can't delete that)
-echo "Available local branches...."
+# renumber the array with sequential choices starting at 1
+declare -a renumbered_branchlist
+choice_number=1
 for index in "${!branchlist[@]}"; do
-  echo "${index} ${branchlist[index]}"
+  if [ "${#renumbered_branchlist[@]}" -eq 0 ]; then
+    renumbered_branchlist[$choice_number]=${branchlist[index]}
+  else
+    renumbered_branchlist+=(${branchlist[$index]})
+  fi
 done
 
-read -rp "Enter comma separated list of numbers for branches to DELETE:" branches_to_delete
+renumbered_branchlist_length="${#renumbered_branchlist[@]}"
+
+# list the local branches (not including current branch as can't delete that)
+echo "Available local branches...."
+
+for index in "${!renumbered_branchlist[@]}"; do
+  echo "${index} ${renumbered_branchlist[index]}"
+done
+
+read -rp 'Enter comma separated list of numbers for branches to DELETE - or else type "quit":' branches_to_delete
+if [ "${branches_to_delete}" = 'quit' ]; then
+    echo 'Quitting now...'
+    exit
+fi
 
 if [ -z "${branches_to_delete}" ]; then
   echo "No branches chosen. Quitting now..."
   exit
 fi
 
+# decide between force delete -D or with check -d
+echo "Choose force delete..."
+PS3='Do you want to FORCE DELETE -D the branches?'
+COLUMNS=1
+select setting in 'yes' 'no'; do
+  case $REPLY in
+  1)
+    force=true
+    break
+    ;;
+  2)
+    force=false
+    break
+    ;;
+  'quit')
+    echo "Quitting now..."
+    exit
+    break
+    ;;
+  *)
+    echo 'Please choose either option 1 or 2 - or else type "quit"'
+    ;;
+  esac
+done
+
 readarray -td ',' numbers <<<"$branches_to_delete"
 
 for choice in "${numbers[@]}"; do
   choice="${choice//[[:space:]]/}"
-  if ! [[ "$choice" =~ ^[0-9]+$ ]] || [[ "$choice" -lt 1 ]] || [[ "$choice" -gt "$branchlist_length" ]]; then
+  if ! [[ "$choice" =~ ^[0-9]+$ ]] || [[ "$choice" -lt 1 ]] || [[ "$choice" -gt "$renumbered_branchlist_length" ]]; then
     echo "Invalid choice $choice ...skipping"
     continue
   fi
-  branch="${branchlist[$choice]}"
-  echo "Choose to delete branch ${branch}:"
-  PS3="Choose delete type 1 or 2 for ${branch}:"
-  select delete_type in 'only if it has been pushed and merged (-d)' 'with force delete (-D)'; do
-    case $REPLY in
-    1)
-      git branch -d "${branch}"
-      break
-      ;;
-    2)
+  branch="${renumbered_branchlist[$choice]}"
+  echo "Deleting branch ${branch}"
+  if [ "$force" = true ]; then
       git branch -D "${branch}"
-      break
-      ;;
-    *)
-      echo 'Please choose either option 1 or 2'
-      ;;
-    esac
-  done
+  else
+      git branch -d "${branch}"
+  fi
 done
