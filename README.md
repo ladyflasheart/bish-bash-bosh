@@ -7,7 +7,7 @@ This repository contains bash scripts created to make some of my routine tasks m
 When prompted for actions in these scripts you can type "__quit__" to exit the script - or alternatively just __Ctrl+c__ at any time to stop program
 
 ### gitbranch.sh
-__interactive menu for checking out local or remote branches__
+__Interactive menu for checking out local or remote branches__
 
 #### Features
 + checks script invoked from within git working directory
@@ -36,7 +36,7 @@ gitbranch.sh : interactive menu for delet
 4. Enter the number of the branch you want to checkout and the script will use `git checkout` to check it out for you
 
 ### gitbranchdelete.sh
-__interactive menu for deleting local branches__
+__Interactive menu for deleting local branches__
 
 #### Features
 + checks script invoked from within git working directory
