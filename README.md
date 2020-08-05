@@ -4,6 +4,8 @@ This repository contains bash scripts created to make some of my routine tasks m
 
 ## Gitstuff
 
+When prompted for actions in these scripts you can type "__quit__" to exit the script - or alternatively just __Ctrl+c__ at any time to stop program
+
 ### gitbranch.sh
 __interactive menu for checking out local or remote branches__
 
