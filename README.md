@@ -46,4 +46,4 @@ __interactive menu for deleting local branches__
 1. Copy the script to somewhere on your $PATH (e.g. `cp ./gitbranchdelete.sh /usr/local/bin/gitbranchdelete`) and make sure it is executable (`chmod u+x gitbranchdelete`)
 2. Go to a folder which is a git working directory and call script `gitbranchdelete`
 3. Enter the number(s) of the branches you want to delete - separated with commas if more than one (e.g. `2,3,5`)
-4. Choose whether deleting with checks or force delete for each branch
+4. Choose whether deleting with checks or force delete (force delete means no checks, whereas otherwise git delete will check if the branch has been fully merged into upstream branch and stop if it hasn't)
